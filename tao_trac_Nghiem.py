@@ -51,8 +51,8 @@
         const data_calculator = {
             "+" : function(a) {number += a;},
             "-" : function(a) {number -= a;},
-            "*" : function(a) {number += old_number * a;},
-            "/" : function(a) {number = old_number / a;},
+            "*" : function(a) {number *= a;},
+            "/" : function(a) {number /= a;},
         };
         let current_calculator = "+";
 
