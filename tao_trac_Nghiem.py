@@ -58,8 +58,8 @@
         };
 
         const second_final = {
-            "*" : function(b, a) { return a * b; },
-            "/" : function(b, a) { return a / b; },
+            "*" : function(a, b) { return a * b; },
+            "/" : function(a, b) { return a / b; },
         };
 
         let current_calculator = "+";
@@ -103,9 +103,7 @@
                             let second_number = old_number_box[0];
 
                             for (let v = 2; v < old_number_box.length; v += 2) {
-                                let operator = old_number_box[v - 1];
-                                let next_num = old_number_box[v];
-                                second_number = second_final[operator](next_num, second_number);
+                                second_number = second_final[old_number_box[v - 1]](second_number, old_number_box[v]);
                             };
 
                             data_calculator[current_calculator](second_number);
@@ -115,11 +113,12 @@
                         };
                     } else {
                         old_number_box.push(test);
-                        old_number_box.push(future_point);
                     };
                 } else {
                     if (final_data_calculator[test]) {
                         current_calculator = test;
+                    } else {
+                        old_number_box.push(test)
                     };
                 };
             };
