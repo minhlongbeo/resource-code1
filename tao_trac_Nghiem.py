@@ -25,52 +25,114 @@
         <button type="button" onclick="CheckNumber(4)">4</button>
         <button type="button" onclick="CheckNumber(5)">5</button>
         <button type="button" onclick="CheckNumber(6)">6</button>
-        <button type="button" onclick="if (New_Number) {data_calculator[current_calculator](current_number);}; answertext.innerText+=number">=</button>
+        <button type="button" onclick="ShowCase()">=</button>
     </div>
 
     <div class="customgui">
         <button type="button" onclick="CheckNumber(7)">7</button>
         <button type="button" onclick="CheckNumber(8)">8</button>
         <button type="button" onclick="CheckNumber(9)">9</button>
-        <button type="button" onclick="labeltext.innerText=''; answertext.innerText='='; number=0; current_number=0; old_number=0; old_index=0; current_calculator='+';">X</button>
+        <button type="button" onclick="ResetCalculator()">X</button>
     </div>
 
-    <p id="ShowNumber" style="border: 2px solid black; display: inline-block;"></p>
+    <p id="ShowNumber" style="border: 2px solid black; display: inline-block; min-width: 50px; min-height: 20px;"></p>
     <p id="ShowAnswer" style="border: 2px solid black; display: inline-block;">=</p>
 
     <script>
         const labeltext = document.getElementById("ShowNumber");
         const answertext = document.getElementById("ShowAnswer");
         
-        let New_Number = true;
-        let old_index = 0;
-        let old_number = 0;
         let current_number = 0;
         let number = 0;
+        let data_number = [];
 
         const data_calculator = {
-            "+" : function(a) {number += a;},
-            "-" : function(a) {number -= a;},
-            "*" : function(a) {number *= a;},
-            "/" : function(a) {number /= a;},
+            "+" : function(a) { number += a; },
+            "-" : function(a) { number -= a; },
         };
+
+        const final_data_calculator = {
+            "+" : true,
+            "-" : true,
+            undefined : true,
+        };
+
+        const second_final = {
+            "*" : function(b, a) { return a * b; },
+            "/" : function(b, a) { return a / b; },
+        };
+
         let current_calculator = "+";
 
         function CheckNumber(num) {
             if (num > -1) {
-                New_Number = true;
-                current_number = (current_number*10) + num;
+                current_number = (current_number * 10) + num;
             } else {
-                old_number = current_number;
+                data_number.push(current_number);
+                data_number.push(num);
                 current_number = 0;
-
-                New_Number = false;
-                data_calculator[current_calculator](old_number);
-                current_calculator = num;
-            }
-            
-            old_index = num;
-            labeltext.innerText+=num;
+            };
+            labeltext.innerText += num;
         };
+
+        function ShowCase() {
+            data_number.push(current_number);
+
+            if (final_data_calculator[data_number[0]] === true && typeof data_number[0] !== 'number') {
+                data_number.shift();
+            };
+            if (typeof data_number[data_number.length - 1] !== 'number') {
+                data_number.pop();
+            };
+
+            let lens = data_number.length;
+            let old_number_box = [];
+            current_calculator = "+";
+            number = 0;
+
+            for (let i = 0; i < lens; i++) {
+                let test = data_number[i];
+
+                if (test > -1) { 
+                    let future_point = data_number[i + 1];
+
+                    if (final_data_calculator[future_point]) {
+                        if (old_number_box.length > 0) {
+                            old_number_box.push(test); 
+
+                            let second_number = old_number_box[0];
+
+                            for (let v = 2; v < old_number_box.length; v += 2) {
+                                let operator = old_number_box[v - 1];
+                                let next_num = old_number_box[v];
+                                second_number = second_final[operator](next_num, second_number);
+                            };
+
+                            data_calculator[current_calculator](second_number);
+                            old_number_box.length = 0;
+                        } else {
+                            data_calculator[current_calculator](test);
+                        };
+                    } else {
+                        old_number_box.push(test);
+                        old_number_box.push(future_point);
+                    };
+                } else {
+                    if (final_data_calculator[test]) {
+                        current_calculator = test;
+                    };
+                };
+            };
+
+            answertext.innerText = "= " + number;
+        };
+
+        function ResetCalculator() {
+            labeltext.innerText = ''; 
+            answertext.innerText = '='; 
+            number = 0; 
+            current_number = 0; 
+            data_number.length = 0; 
+        }
     </script>
 </body>
