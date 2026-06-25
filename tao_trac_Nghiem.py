@@ -12,6 +12,7 @@
         <button type="button" onclick="CheckNumber('-')">-</button>
         <button type="button" onclick="CheckNumber('*')">*</button>
         <button type="button" onclick="CheckNumber('/')">/</button>
+        <button type="button" onclick="PreMove()"> <- </button>
     </div>
 
     <div class="customgui">
@@ -78,10 +79,10 @@
         function ShowCase() {
             data_number.push(current_number);
 
-            if (final_data_calculator[data_number[0]] === true && typeof data_number[0] !== 'number') {
+            if (typeof data_number[0] === 'string') {
                 data_number.shift();
             };
-            if (typeof data_number[data_number.length - 1] !== 'number') {
+            if (typeof data_number[data_number.length - 1] === 'string') {
                 data_number.pop();
             };
 
@@ -132,6 +133,29 @@
             number = 0; 
             current_number = 0; 
             data_number.length = 0; 
-        }
+        };
+
+        function PreMove() {
+            let current_text = labeltext.innerText;
+
+            if (current_number == 0) {
+                let last_number = data_number[data_number.length - 2];
+
+                if (last_number > -1) {
+                    console.log("trigger đã xóa đi số cũ (hay nói cách khác là số trong bảng dữ liệu)", last_number);
+                    current_number = last_number;
+                    
+                    data_number.pop();
+                };
+
+                data_number.pop();
+            } else {
+                current_number = Math.floor(current_number/10);
+            };
+
+            console.log(data_number);
+
+            labeltext.innerText = current_text.slice(0, current_text.length - 1);
+        };
     </script>
 </body>
